@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
-import CreateUserDto from "../../DTOs/user/CreateUserDto";
 import prisma from "../../lib/prisma";
+import { CreateUserDto } from "../../DTOs/UserDTOs";
 
 const createUser = async (req: Request, res: Response) => {
   const validation = CreateUserDto.safeParse(req.body);
@@ -33,12 +33,10 @@ const createUser = async (req: Request, res: Response) => {
     },
   });
 
-
   // response.setHeader("Access-Control-Allow-Origin", "*");
   // response.setHeader("Access-Control-Allow-Methods", "POST");
 
-
-  return res.status(201).json({ message: "用户创建成功", userId: user.id });
+  return res.status(201).json({ user });
 };
 
 export default createUser;

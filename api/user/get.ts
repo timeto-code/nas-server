@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import GetUserDto from "../../DTOs/user/GetUserDto";
 import prisma from "../../lib/prisma";
+import { GetUserDto } from "../../DTOs/UserDTOs";
 
 const getUserByIdOrNameOrEmail = async (req: Request, res: Response) => {
   const validation = GetUserDto.safeParse(req.body);

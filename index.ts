@@ -7,6 +7,7 @@ import authorizeToken from "./middleware/auth/authorizeToken";
 import authorizeJWT from "./middleware/auth/authorizeJWT";
 import logger from "./logger";
 import userRouter from "./routers/user";
+import folderRouter from "./routers/folder";
 
 const app = express();
 // app.set("trust proxy", true);
@@ -23,7 +24,8 @@ app.use(noCache);
 app.use("/", rootRouter);
 app.use("/favicon.ico", express.static("public/favicon.ico"));
 // app.use("/robots.txt", express.static("public/robots.txt"));
-app.use('/api/user', userRouter);
+app.use("/api/user", userRouter);
+app.use("/api/folder", folderRouter);
 
 const port = parseInt(process.env.DDNS_SERVER_PORT!);
 const host = "localhost";
