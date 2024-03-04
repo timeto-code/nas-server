@@ -61,7 +61,7 @@ jobs:
       - name: Zip production artifacts
         run: |
           cd server
-          zip -r server.zip server
+          zip -r ../server.zip .
 
       - name: Create release
         id: create_release
