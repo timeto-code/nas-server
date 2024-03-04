@@ -72,7 +72,7 @@ jobs:
           prerelease: false
 
       - name: Upload release asset
-        use: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: server.zip
