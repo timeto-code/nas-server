@@ -45,18 +45,18 @@ jobs:
       - name: Archive production artifacts
         run: |
           mkdir server
-          cp server/keys
-          cp server/resources
+          cp -r db server/db
           cp -r dist server/dist
           cp -r prisma server/prisma
           rm -r server/prisma/migrations
-          cp -r .env server/.env
-          cp -r package.json server/package.json
-          cp -r package-lock.json server/package-lock.json
-          cp -r ecosystem.config.js server/ecosystem.config.js
-          cp -r db server/db
+          cp keys server/keys
+          cp resources server/resources
+          cp .env server/.env
+          cp package.json server/package.json
+          cp package-lock.json server/package-lock.json
+          cp ecosystem.config.js server/ecosystem.config.js
           cp readme.md server/readme.md
-          cp -r LICENSE server/LICENSE
+          cp LICENSE server/LICENSE
 
       - name: Zip production artifacts
         run: |
