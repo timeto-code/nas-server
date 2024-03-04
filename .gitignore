@@ -125,6 +125,8 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+.DS_Store
+
 # resources
 resources/*
 
