@@ -73,10 +73,9 @@ web_modules/
 .yarn-integrity
 
 # dotenv environment variable files
-.env
-.env.development.local
-.env.test.local
-.env.production.local
+.env.development
+.env.test
+.env.production
 .env.local
 
 # parcel-bundler cache (https://parceljs.org/)
@@ -126,5 +125,12 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+# resources
+resources/*
+
+# keys
+keys/*
+*.pem
+
 # 笔记
-笔记.md
+笔记/

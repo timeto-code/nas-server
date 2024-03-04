@@ -1,5 +1,10 @@
 import * as z from "zod";
 
+const LoginDto = z.object({
+  username: z.string().min(3),
+  password: z.string().min(6).max(20),
+});
+
 const GetUserDto = z.object({
   id: z.string().min(3).optional(),
   name: z.string().min(3).max(30).optional(),
@@ -12,4 +17,4 @@ const CreateUserDto = z.object({
   password: z.string().min(6).max(20),
 });
 
-export { GetUserDto, CreateUserDto };
+export { GetUserDto, CreateUserDto, LoginDto };

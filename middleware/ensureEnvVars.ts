@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import logger from "../logger";
+import logger from "../util/logger";
 
 const ensureEnvVars = (req: Request, res: Response, next: () => void) => {
   const requiredVars = [

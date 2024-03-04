@@ -6,8 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 enum Role {
@@ -19,16 +20,13 @@ model User {
   id             String    @id @default(cuid())
   name           String    @unique
   alias          String?
-  hashedPassword String?
+  hashedPassword String
   email          String?   @unique
   emailVerified  DateTime?
   image          String?
   role           Role      @default(USER)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
-
-  files   File[]
-  folders Folder[]
 }
 
 model File {
@@ -36,31 +34,37 @@ model File {
   name      String
   size      Int
   type      String
-  path      String
+  link      String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-
   folderId String
-  folder   Folder @relation(fields: [folderId], references: [id])
+  folder   Folder @relation(fields: [folderId], references: [id], onDelete: Cascade)
 }
 
 model Folder {
-  id        String   @id @default(cuid())
-  name      String
-  path      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(cuid())
+  name         String
+  userId       String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  totalFiles   Int      @default(0)
+  totalFolders Int      @default(0)
 
-  files File[]
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
+  filesCount      Int      @default(0)
+  files           File[]
+  subFoldersCount Int      @default(0)
+  subFolders      Folder[] @relation("SubFolders")
 
   parentId String?
-  parent   Folder? @relation("ParentChildrenFolders", fields: [parentId], references: [id])
+  parent   Folder? @relation("SubFolders", fields: [parentId], references: [id], onDelete: Cascade)
+}
 
-  children Folder[] @relation("ParentChildrenFolders")
+model Download_Token {
+  id        String   @id @default(cuid())
+  fileId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

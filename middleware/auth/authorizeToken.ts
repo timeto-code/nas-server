@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import logger from "../../logger";
+import logger from "../../util/logger";
 
 const authorizeToken = (req: Request, res: Response, next: NextFunction) => {
   const authToken = req.headers["x-auth-token"];

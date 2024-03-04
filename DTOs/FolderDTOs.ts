@@ -1,11 +1,18 @@
 import * as z from "zod";
 
-const GetFolderDto = z.object({
-  id: z.string().min(1).optional(),
-  name: z.string().min(1).max(20).optional(),
-  userId: z.string().min(1).optional(),
-  parentId: z.string().min(1).optional(),
-  path: z.string().min(1).optional(),
+const CreateFolderDto = z.object({
+  name: z.string().min(1).max(30),
+  parentId: z.string().min(1),
 });
 
-export { GetFolderDto };
+const RenameFolderDto = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1).max(30),
+});
+
+const MoveFolderDto = z.object({
+  fronId: z.string().min(1),
+  toId: z.string().min(1),
+});
+
+export { CreateFolderDto, RenameFolderDto, MoveFolderDto };
