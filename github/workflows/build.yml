@@ -4,7 +4,7 @@ run-name: ${{ github.actor }} is building and releasing the app 🏗️ ...
 on:
   pull_request:
     branches:
-      - master
+      - main
     types: [closed]
 
 jobs:
