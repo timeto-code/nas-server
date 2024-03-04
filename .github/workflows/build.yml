@@ -60,6 +60,7 @@ jobs:
 
       - name: Zip production artifacts
         run: |
+          cd server
           zip -r server.zip server
 
       - name: Create release
