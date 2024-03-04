@@ -45,12 +45,12 @@ jobs:
       - name: Archive production artifacts
         run: |
           mkdir server
+          mkdir server/keys
+          mkdir server/resources
           cp -r db server/db
           cp -r dist server/dist
           cp -r prisma server/prisma
           rm -r server/prisma/migrations
-          cp keys server/keys
-          cp resources server/resources
           cp .env server/.env
           cp package.json server/package.json
           cp package-lock.json server/package-lock.json
