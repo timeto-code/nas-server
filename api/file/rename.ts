@@ -2,12 +2,15 @@ import { Request, Response } from "express";
 import { RenameFileDto } from "../../DTOs/FileDTOs";
 import prisma from "../../lib/prisma";
 import logger from "../../util/logger";
+import { renameFileFailed } from "./response";
 
 const renameFile = async (req: Request, res: Response) => {
   const validation = RenameFileDto.safeParse(req.body);
   if (!validation.success) {
-    logger.warn("无效文件名");
-    return res.status(400).json({ message: "无效文件名" });
+    logger.warn(
+      `文件名更新失败，表单无效：${validation.error.errors[0].message}`
+    );
+    return renameFileFailed(res);
   }
 
   const { id, name } = validation.data;
@@ -18,8 +21,8 @@ const renameFile = async (req: Request, res: Response) => {
     });
 
     if (!existingFile) {
-      logger.warn("数据库文件不存在");
-      return res.status(404).json({ message: "数据库文件不存在" });
+      logger.warn(`文件名更新失败，文件不存在: ${id}`);
+      return renameFileFailed(res);
     }
 
     // 检查新文件名是否有后辍
@@ -42,8 +45,8 @@ const renameFile = async (req: Request, res: Response) => {
 
     return res.status(200).send();
   } catch (error) {
-    logger.error(`文件名更新失败: ${error}`);
-    return res.status(500).json({ message: "服务器错误" });
+    logger.error(`文件名更新失败，服务器异常: ${error}`);
+    return renameFileFailed(res);
   }
 };
 

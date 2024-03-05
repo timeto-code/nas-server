@@ -3,14 +3,16 @@ import { Request, Response } from "express";
 import { CreateUserDto } from "../../DTOs/UserDTOs";
 import prisma from "../../lib/prisma";
 import logger from "../../util/logger";
+import { emailExists, registrationFailed, userNameExists } from "./response";
+import { invalidForm } from "../response";
 
 const createUser = async (req: Request, res: Response) => {
   try {
     const validation = CreateUserDto.safeParse(req.body);
 
     if (!validation.success) {
-      logger.warn(`创建用户失败，无效用户信息！`);
-      return res.status(400).json({ message: "创建用户失败，无效用户信息！" });
+      logger.warn(`注册表单无效：${validation.error.errors[0].message}`);
+      return invalidForm(res);
     }
 
     const { name, email, password } = validation.data;
@@ -22,8 +24,8 @@ const createUser = async (req: Request, res: Response) => {
     });
 
     if (userNameExisted) {
-      logger.warn(`注册失败用户名 ${name} 已存在`);
-      return res.status(400).json({ message: "用户名已存在" });
+      logger.warn(`注册失败用户名已存在: ${name}`);
+      return userNameExists(res);
     }
 
     const userEmailExisted = await prisma.user.findUnique({
@@ -33,8 +35,8 @@ const createUser = async (req: Request, res: Response) => {
     });
 
     if (userEmailExisted) {
-      logger.warn(`注册失败邮箱 ${email} 已存在`);
-      return res.status(400).json({ message: "邮箱已存在" });
+      logger.warn(`注册失败邮箱已存在: ${email}`);
+      return emailExists(res);
     }
 
     const salt = bcrypt.genSaltSync(10);
@@ -55,11 +57,11 @@ const createUser = async (req: Request, res: Response) => {
       },
     });
 
-    logger.info(`用户创建成功: ${user.name} [${user.id}]`);
+    logger.info(`注册成功: ${user.name} [${user.id}]`);
     return res.status(201).send();
   } catch (error) {
-    logger.error(`创建用户失败: ${error}`);
-    return res.status(500).json({ message: "创建用户失败" });
+    logger.error(`注册失败，服务器异常: ${error}`);
+    return registrationFailed(res);
   }
 };
 

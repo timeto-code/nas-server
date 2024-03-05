@@ -9,6 +9,7 @@ import folderRouter from "./routers/folder";
 import userRouter from "./routers/user";
 import { envConfig } from "./util/env.config";
 import logger from "./util/logger";
+import connectionTestRouter from "./routers/connect";
 
 const app = express();
 // app.set("trust proxy", true);
@@ -33,6 +34,7 @@ app.use(authorizeJWT);
 // app.use("/robots.txt", express.static("public/robots.txt"));
 
 // API 路由
+app.use("/connection-test", connectionTestRouter);
 app.use("/download", downloadRouter);
 app.use("/api/user", userRouter);
 app.use("/api/folder", folderRouter);

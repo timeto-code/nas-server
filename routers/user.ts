@@ -1,7 +1,7 @@
 import { Router } from "express";
 import createUser from "../api/user/create";
 import getUserByIdOrNameOrEmail from "../api/user/fetch";
-import authLogin from "../api/user/authLogin";
+import login from "../api/user/login";
 const userRouter = Router();
 
 userRouter.post("/register", async (req, res) => {
@@ -12,8 +12,12 @@ userRouter.post("/fetch", async (req, res) => {
   getUserByIdOrNameOrEmail(req, res);
 });
 
-userRouter.post("/Login", async (req, res) => {
-  authLogin(req, res);
+userRouter.post("/login", async (req, res) => {
+  login(req, res);
+});
+
+userRouter.post("/login/fetch", async (req, res) => {
+  getUserByIdOrNameOrEmail(req, res);
 });
 
 userRouter.put("/update", async (req, res) => {});

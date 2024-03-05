@@ -1,71 +1,73 @@
 import { Request, Response } from "express";
 import fs from "fs";
 import path from "path";
-import { v4 as uuidv4 } from "uuid";
 import prisma from "../../lib/prisma";
-import logger from "../../util/logger";
 import { envConfig } from "../../util/env.config";
+import logger from "../../util/logger";
+import { uploadFileFailed } from "./response";
 
+// 上传文件
 const uploadFile = async (req: Request, res: Response) => {
-  if (!req.file) {
-    // 如果请求中没有包含文件
-    return res.status(400).send({ error: "文件内容为空" });
-  }
-
-  let { chunkIndex, fileName, isLastChunk, folderId } = req.body; // 从请求体中获取分块索引和文件名
-
-  // 获取父文件夹的信息
   try {
-    const folder = await prisma.folder.findUnique({
-      where: {
-        id: folderId,
-      },
-      include: {
-        files: true,
-      },
-    });
-
-    if (!folder) {
-      return res.status(404).send({ error: "文件夹不存在" });
+    if (!req.file) {
+      logger.warn("上传文件失败，请求未携带任何文件！");
+      return uploadFileFailed(res);
     }
 
-    // 获取文件夹下的所有文件
-    const files = folder.files;
+    let { chunkIndex, fileName, isLastChunk, folderId } = req.body;
+    const fileDir = path.join(envConfig.SERVER_ROOT!, "resources", fileName);
 
-    // 判断包含文件名的有多少个
-    const existingFile = files.filter((file) => file.name.includes(fileName));
-
-    // 如果有同名文件，就在文件名后面加上一个数字
-    if (existingFile.length > 0) {
-      const name = fileName.split(".").shift();
-      const extension = fileName.split(".").pop();
-      fileName = `${name}(${existingFile.length}).${extension}`;
-    }
-
-    const chunkPath = req.file.path; // 获取上传的文件分块的路径
-    const link = `${fileName.split(".").shift()}_${uuidv4()}.${fileName
-      .split(".")
-      .pop()}`;
-    const fileDir = path.join(envConfig.SERVER_ROOT!, "resources", link); // 计算最终文件的存储路径
-
-    // 如果是第一个分块且最终文件已存在，则删除最终文件
     if (chunkIndex == 0 && fs.existsSync(fileDir)) {
       fs.unlinkSync(fileDir);
     }
 
-    // 将分块内容追加到最终文件中
+    const chunkPath = req.file.path;
     fs.appendFileSync(fileDir, fs.readFileSync(chunkPath));
-    // 删除已上传的分块文件
     fs.unlinkSync(chunkPath);
 
+    // 如果是最后一个块，数据库中创建文件记录
     if (isLastChunk === "true") {
+      const folder = await prisma.folder.findUnique({
+        where: {
+          id: folderId,
+        },
+        include: {
+          files: true,
+        },
+      });
+
+      // 这个情况正常情况下不会发生，因为前端会在上传文件之前检查文件夹是否存在
+      if (!folder) {
+        logger.warn(`上传文件失败，文件夹不存在: ${folderId}`);
+        return uploadFileFailed(res);
+      }
+
+      // 拆分文件名和扩展名
+      let name = fileName;
+      let baseName = fileName;
+      let extension = "";
+      const match = fileName.match(/^(.+?)(\.[^.]*$|$)/);
+      if (match) {
+        baseName = match[1];
+        extension = match[2];
+      }
+      // 文件名在客户端时被添加了时间戳+folderId，这里去掉
+      baseName = baseName.split("-")[1];
+
+      // 如果文件名已存在，则在文件名后面加上数字
+      const files = folder.files;
+      const existingFile = files.filter((file) => file.name.includes(fileName));
+      if (existingFile.length > 0) {
+        name = `${baseName}(${existingFile.length})${extension}`;
+      }
+
       // 假设所有块都已上传，并且文件重组完成
       const file = await prisma.file.create({
         data: {
-          name: fileName,
+          name: name,
           size: fs.statSync(fileDir).size,
-          type: fileName.split(".").pop(),
-          link,
+          type: extension.replace(".", ""),
+          link: fileName,
           folderId,
         },
       });
@@ -84,9 +86,9 @@ const uploadFile = async (req: Request, res: Response) => {
       message: `成功上传 ${fileName} 的第 ${chunkIndex} 块，可以实现进度条效果`,
     });
   } catch (error) {
-    logger.error(error);
+    logger.error(`上传文件失败，服务器异常: ${error}`);
     res.status(500).send({ error: "上传失败，需要实现重试机制" }); // 返回500状态码和错误信息
   }
 };
 
-export default uploadFile;
+export { uploadFile };

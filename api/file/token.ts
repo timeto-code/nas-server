@@ -26,10 +26,10 @@ const getDownloadToken = async (req: Request, res: Response) => {
       },
     });
 
-    const downloadLink = `${envConfig.HOST}:${envConfig.PORT}/download/${file.link}?token=${downloadToken.token}`;
+    const downloadLink = `${envConfig.PROTOCOL}://${envConfig.HOST}:${envConfig.PORT}/download/${file.link}?token=${downloadToken.token}`;
     return res.status(200).json({ downloadLink });
   } catch (error) {
-    logger.error(`获取下载链接失败: ${error}`);
+    logger.error(`获取下载链接失败，服务器异常: ${error}`);
     return res.status(500).json({ message: "获取下载链接失败" });
   }
 };

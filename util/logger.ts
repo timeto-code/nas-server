@@ -3,7 +3,7 @@ import { createLogger, format, transports } from "winston";
 import { envConfig } from "./env.config";
 
 const logger = createLogger({
-  level: "debug",
+  level: process.env.NODE_ENV === "production" ? "info" : "debug",
 
   // 使用format.combine结合多个日志格式化选项。
   format: format.combine(

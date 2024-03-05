@@ -5,7 +5,7 @@ import deleteFile from "../api/file/delete";
 import moveFile from "../api/file/move";
 import renameFile from "../api/file/rename";
 import getDownloadToken from "../api/file/token";
-import uploadFile from "../api/file/upload";
+import { uploadFile } from "../api/file/upload";
 import { envConfig } from "../util/env.config";
 
 const fileRouter = Router();

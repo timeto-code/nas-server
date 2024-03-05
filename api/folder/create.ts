@@ -2,14 +2,18 @@ import { Request, Response } from "express";
 import { CreateFolderDto } from "../../DTOs/FolderDTOs";
 import prisma from "../../lib/prisma";
 import logger from "../../util/logger";
+import { invalidForm } from "../response";
+import { createFolderFailed } from "./response";
 
 const createFolder = async (req: Request, res: Response) => {
   try {
     const validation = CreateFolderDto.safeParse(req.body);
 
     if (!validation.success) {
-      logger.warn("文件夹信息无效");
-      return res.status(400).json({ message: "文件夹信息无效" });
+      logger.warn(
+        `创建文件夹失败，表单无效：${validation.error.errors[0].message}`
+      );
+      return invalidForm(res);
     }
 
     let { name, parentId } = validation.data;
@@ -21,8 +25,8 @@ const createFolder = async (req: Request, res: Response) => {
     });
 
     if (!parentFolder) {
-      logger.warn("父文件夹不存在");
-      return res.status(404).json({ message: "父文件夹不存在" });
+      logger.warn(`创建文件夹失败，父文件夹不存在！`);
+      return createFolderFailed(res);
     }
 
     const existingFolder = await prisma.folder.findMany({
@@ -52,8 +56,8 @@ const createFolder = async (req: Request, res: Response) => {
 
     return res.status(201).send();
   } catch (error) {
-    logger.error(`创建文件夹失败: ${error}`);
-    return res.status(500).json({ message: "创建文件夹失败" });
+    logger.error(`创建文件夹失败，服务器异常: ${error}`);
+    return createFolderFailed(res);
   }
 };
 

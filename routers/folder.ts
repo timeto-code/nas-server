@@ -31,4 +31,8 @@ folderRouter.put("/rename", async (req, res) => {
   renameFolder(req, res);
 });
 
+folderRouter.get("/login/fetchUserRoot/:id", async (req, res) => {
+  getUserRootFolder(req, res);
+});
+
 export default folderRouter;
