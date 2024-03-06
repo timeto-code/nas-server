@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "remote-nas-server",
+      name: "nas-server",
       script: "npm",
       args: "run start",
       env: {

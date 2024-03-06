@@ -15,7 +15,10 @@ const app = express();
 // app.set("trust proxy", true);
 app.use(
   cors({
-    origin: envConfig.CORS_ORIGIN.split(",").map((origin) => origin.trim()),
+    origin:
+      envConfig.CORS_ORIGIN === "*"
+        ? "*"
+        : envConfig.CORS_ORIGIN.split(",").map((origin) => origin.trim()),
     // credentials: true,
   })
 );

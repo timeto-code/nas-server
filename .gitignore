@@ -125,14 +125,15 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-.DS_Store
+.DS_Store/
 
 # resources
 resources/*
+
+# prisma
+prisma/migrations/
 
 # keys
 keys/*
 *.pem
 
-# 笔记
-笔记/
