@@ -50,7 +50,6 @@ jobs:
           cp -r db server/db
           cp -r dist server/dist
           cp -r prisma server/prisma
-          rm -r server/prisma/migrations
           cp .env server/.env.production
           cp package.json server/package.json
           cp package-lock.json server/package-lock.json
