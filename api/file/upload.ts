@@ -53,6 +53,7 @@ const uploadFile = async (req: Request, res: Response) => {
       }
       // 文件名在客户端时被添加了时间戳+folderId，这里去掉
       baseName = baseName.split("-")[1];
+      baseName = baseName.slice(1).join('');
 
       // 如果文件名已存在，则在文件名后面加上数字
       const files = folder.files;
@@ -64,7 +65,7 @@ const uploadFile = async (req: Request, res: Response) => {
       // 假设所有块都已上传，并且文件重组完成
       const file = await prisma.file.create({
         data: {
-          name: name,
+          name: `${baseName}${extension}`,
           size: fs.statSync(fileDir).size,
           type: extension.replace(".", ""),
           link: fileName,

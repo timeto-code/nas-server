@@ -125,15 +125,18 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+# Mac 独有 files
 .DS_Store/
 
-# resources
+# nas 资源目录
 resources/*
 
 # prisma
 prisma/migrations/
 
-# keys
+# 密钥文件
 keys/*
 *.pem
 
+# BUG文件
+bug.md
