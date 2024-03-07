@@ -3,8 +3,8 @@ import { Request, Response } from "express";
 import { CreateUserDto } from "../../DTOs/UserDTOs";
 import prisma from "../../lib/prisma";
 import logger from "../../util/logger";
-import { emailExists, registrationFailed, userNameExists } from "./response";
 import { invalidForm } from "../response";
+import { emailExists, registrationFailed, userNameExists } from "./response";
 
 const createUser = async (req: Request, res: Response) => {
   try {
