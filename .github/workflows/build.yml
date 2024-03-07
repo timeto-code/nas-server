@@ -59,7 +59,7 @@ jobs:
       - name: Zip production artifacts
         run: |
           cd server
-          zip -r ../nas-server.zip .
+          zip -r ../server.zip .
 
       - name: Create release
         id: create_release
@@ -78,6 +78,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: nas-server.zip
-          asset_name: nas-server.zip
+          asset_path: server.zip
+          asset_name: server.zip
           asset_content_type: application/zip
