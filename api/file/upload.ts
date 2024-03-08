@@ -52,7 +52,7 @@ const uploadFile = async (req: Request, res: Response) => {
         extension = match[2];
       }
       // 文件名在客户端时被添加了时间戳+folderId，这里去掉
-      baseName = baseName.split("-")[1];
+      baseName = baseName.split("-");
       baseName = baseName.slice(1).join("");
 
       // 如果文件名已存在，则在文件名后面加上数字
