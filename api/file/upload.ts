@@ -60,6 +60,8 @@ const uploadFile = async (req: Request, res: Response) => {
       const existingFile = files.filter((file) => file.name.includes(fileName));
       if (existingFile.length > 0) {
         name = `${baseName}(${existingFile.length})${extension}`;
+      } else {
+        name = `${baseName}${extension}`;
       }
 
       // 假设所有块都已上传，并且文件重组完成
